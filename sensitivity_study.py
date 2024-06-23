@@ -60,7 +60,7 @@ def bt_sensitivity_V(df):
     Ts = np.mean(df['sst'])
     W = np.mean(df['W'])
     
-    V = np.linspace(0, 16, 100)
+    V = np.linspace(0, 18, 100)
     result_array = []
     channel1 = []
     channel2 = []
@@ -106,7 +106,8 @@ def bt_sensitivity_L(df):
     
     for value in L:
         try:
-            result = scams(value, W, V, Ta, Ts, theta, Ti_amsrv, Ti_amsrh, c_ice, e_icev, e_iceh)
+            #result = scams(value, W, V, Ta, Ts, theta, Ti_amsrv, Ti_amsrh, c_ice, e_icev, e_iceh)
+            result = scams(V, W, value, Ta, Ts, theta, Ti_amsrv, Ti_amsrh, c_ice, e_icev, e_iceh)
             result_array.append(result)
         except Exception as e:
             print(f"Error processing data with {value}: {e}")
@@ -137,14 +138,15 @@ def bt_sensitivity_ts(df):
     L = np.mean(df['L'])
     W = np.mean(df['W'])
     
-    Ts = np.linspace(272.5, 280, 100)
+    Ts = np.linspace(270, 290, 100)
     result_array = []
     channel1 = []
     channel2 = []
     
     for value in Ts:
         try:
-            result = scams(value, W, V, Ta, L, theta, Ti_amsrv, Ti_amsrh, c_ice, e_icev, e_iceh)
+            #result = scams(value, W, V, Ta, L, theta, Ti_amsrv, Ti_amsrh, c_ice, e_icev, e_iceh)
+            result = scams(V, W, L, Ta, value, theta, Ti_amsrv, Ti_amsrh, c_ice, e_icev, e_iceh)
             result_array.append(result)
         except Exception as e:
             print(f"Error processing data with {value}: {e}")
@@ -175,14 +177,15 @@ def bt_sensitivity_ta(df):
     L = np.mean(df['L'])
     W = np.mean(df['W'])  
     
-    Ta = np.linspace(272.5, 280, 100)
+    Ta = np.linspace(230, 290, 100)
     result_array = []
     channel1 = []
     channel2 = []
     
     for value in Ta:
         try:
-            result = scams(value, W, V, Ts, L, theta, Ti_amsrv, Ti_amsrh, c_ice, e_icev, e_iceh)
+            #result = scams(value, W, V, Ts, L, theta, Ti_amsrv, Ti_amsrh, c_ice, e_icev, e_iceh)
+            result = scams(V, W, L, value, Ts, theta, Ti_amsrv, Ti_amsrh, c_ice, e_icev, e_iceh)
             result_array.append(result)
         except Exception as e:
             print(f"Error processing data with {value}: {e}")
@@ -202,7 +205,7 @@ def plot_sensitivity_studies(df):
     # Wind Speed Sensitivity
     windspeeds, wind_channel1, wind_channel2 = bt_sensitivity_W(df)
     plt.figure(figsize=(10, 8))
-    plt.plot(windspeeds, wind_channel1, label='Channel 1', color='#4358cb', linewidth=4)
+    plt.plot(windspeeds, wind_channel1, label='Channel 1', color='#8e9dd7', linewidth=4)
     plt.plot(windspeeds, wind_channel2, label='Channel 2', color='#e45a72', linewidth=4)
     plt.xlabel('[m/s]', fontsize=24)
     plt.ylabel('Brightness Temperature [K]', fontsize=24)
@@ -212,7 +215,7 @@ def plot_sensitivity_studies(df):
 
     # Wind boxplot
     plt.figure(figsize=(10, 3))
-    plt.boxplot(df['W'], labels='W', patch_artist=True, boxprops=dict(facecolor='#4358cb'), medianprops=dict(color='black'),vert=False)
+    plt.boxplot(df['W'], labels='W', patch_artist=True, boxprops=dict(facecolor='#8e9dd7'), medianprops=dict(color='black'),vert=False)
     plt.tick_params(axis='both', which='major', labelsize=18)
     plt.xlabel('[m/s]', fontsize=24)
     plt.tick_params(axis='both', which='major', labelsize=18)
@@ -220,7 +223,7 @@ def plot_sensitivity_studies(df):
     # TCWV Sensitivity
     tcwv, tcwv_channel1, tcwv_channel2 = bt_sensitivity_L(df)
     plt.figure(figsize=(10, 8))
-    plt.plot(tcwv, tcwv_channel1, label='Channel 1', color='#4358cb', linewidth=4)
+    plt.plot(tcwv, tcwv_channel1, label='Channel 1', color='#8e9dd7', linewidth=4)
     plt.plot(tcwv, tcwv_channel2, label='Channel 2', color='#e45a72', linewidth=4)
     plt.xlabel('[mm]', fontsize=24)
     plt.ylabel('Brightness Temperature [K]', fontsize=24)
@@ -230,7 +233,7 @@ def plot_sensitivity_studies(df):
     
     # L boxplot
     plt.figure(figsize=(10, 3))
-    plt.boxplot(df['L'], labels='L', patch_artist=True, boxprops=dict(facecolor='#4358cb'), medianprops=dict(color='black'),vert=False)
+    plt.boxplot(df['L'], labels='L', patch_artist=True, boxprops=dict(facecolor='#8e9dd7'), medianprops=dict(color='black'),vert=False)
     plt.tick_params(axis='both', which='major', labelsize=18)
     plt.xlabel('[mm]', fontsize=24)
     plt.tick_params(axis='both', which='major', labelsize=18)
@@ -238,7 +241,7 @@ def plot_sensitivity_studies(df):
     # TCW Sensitivity
     tcw, tcw_channel1, tcw_channel2 = bt_sensitivity_V(df)
     plt.figure(figsize=(10, 8))
-    plt.plot(tcw, tcw_channel1, label='Channel 1', color='#4358cb', linewidth=4)
+    plt.plot(tcw, tcw_channel1, label='Channel 1', color='#8e9dd7', linewidth=4)
     plt.plot(tcw, tcw_channel2, label='Channel 2', color='#e45a72', linewidth=4)
     plt.xlabel('[mm]', fontsize=24)
     plt.ylabel('Brightness Temperature [K]', fontsize=24)
@@ -248,7 +251,7 @@ def plot_sensitivity_studies(df):
     
     # V boxplot
     plt.figure(figsize=(10, 3))
-    plt.boxplot(df['tcwv'], labels='V', patch_artist=True, boxprops=dict(facecolor='#4358cb'), medianprops=dict(color='black'),vert=False)
+    plt.boxplot(df['tcwv'], labels='V', patch_artist=True, boxprops=dict(facecolor='#8e9dd7'), medianprops=dict(color='black'),vert=False)
     plt.tick_params(axis='both', which='major', labelsize=18)
     plt.xlabel('[mm]', fontsize=24)
     plt.tick_params(axis='both', which='major', labelsize=18)
@@ -256,7 +259,7 @@ def plot_sensitivity_studies(df):
     # SST Sensitivity
     sst, sst_channel1, sst_channel2 = bt_sensitivity_ts(df)
     plt.figure(figsize=(10, 8))
-    plt.plot(sst, sst_channel1, label='Channel 1', color='#4358cb', linewidth=4)
+    plt.plot(sst, sst_channel1, label='Channel 1', color='#8e9dd7', linewidth=4)
     plt.plot(sst, sst_channel2, label='Channel 2', color='#e45a72', linewidth=4)
     plt.xlabel('[K]', fontsize=24)
     plt.ylabel('Brightness Temperature [K]', fontsize=24)
@@ -266,7 +269,7 @@ def plot_sensitivity_studies(df):
     
     # Ts boxplot
     plt.figure(figsize=(10, 3))
-    plt.boxplot(df['sst'], labels=['sst'], patch_artist=True, boxprops=dict(facecolor='#4358cb'), medianprops=dict(color='black'),vert=False)
+    plt.boxplot(df['sst'], labels=['Ts'], patch_artist=True, boxprops=dict(facecolor='#8e9dd7'), medianprops=dict(color='black'),vert=False)
     plt.tick_params(axis='both', which='major', labelsize=18)
     plt.xlabel('[K]', fontsize=24)
     plt.tick_params(axis='both', which='major', labelsize=18)
@@ -274,8 +277,8 @@ def plot_sensitivity_studies(df):
     # T2M Sensitivity
     t2m, t2m_channel1, t2m_channel2 = bt_sensitivity_ta(df)
     plt.figure(figsize=(10, 8))
-    plt.plot(sst, sst_channel1, label='Channel 1', color='#4358cb', linewidth=4)
-    plt.plot(sst, sst_channel2, label='Channel 2', color='#e45a72', linewidth=4)
+    plt.plot(t2m, t2m_channel1, label='Channel 1', color='#8e9dd7', linewidth=4)
+    plt.plot(t2m, t2m_channel2, label='Channel 2', color='#e45a72', linewidth=4)
     plt.xlabel('[K]', fontsize=24)
     plt.ylabel('Brightness Temperature [K]', fontsize=24)
     plt.legend(loc='lower right', fontsize=20, frameon=True)
@@ -284,7 +287,7 @@ def plot_sensitivity_studies(df):
     
     # Ta boxplot
     plt.figure(figsize=(10, 3))
-    plt.boxplot(df['t2m'], labels=['Ta'], patch_artist=True, boxprops=dict(facecolor='#4358cb'), medianprops=dict(color='black'),vert=False)
+    plt.boxplot(df['t2m'], labels=['Ta'], patch_artist=True, boxprops=dict(facecolor='#8e9dd7'), medianprops=dict(color='black'),vert=False)
     plt.tick_params(axis='both', which='major', labelsize=18)
     plt.xlabel('[K]', fontsize=24)
     plt.tick_params(axis='both', which='major', labelsize=18)
@@ -329,9 +332,9 @@ def calculate_std_sensitivity(df):
     sst_std_c1_string = f'STD for sst channel 1 is {sst_std_c1} \n'
     sst_std_c2_string = f'STD for sst channel 2 is {sst_std_c2} \n'
     
-    sst_std_c1_string = f'STD for sst channel 1 is {t2m_std_c1} \n'
-    sst_std_c2_string = f'STD for sst channel 2 is {t2m_std_c2} \n'
+    t2m_std_c1_string = f'STD for t2m channel 1 is {t2m_std_c1} \n'
+    t2m_std_c2_string = f'STD for t2m channel 2 is {t2m_std_c2} \n'
     
     
-    std_statement = wind_std_c1_string + wind_std_c2_string + tcwv_std_c1_string + tcwv_std_c2_string + tcw_std_c1_string +tcw_std_c2_string + sst_std_c1_string + sst_std_c2_string+sst_std_c1_string+sst_std_c2_string
+    std_statement = wind_std_c1_string + wind_std_c2_string + tcwv_std_c1_string + tcwv_std_c2_string + tcw_std_c1_string +tcw_std_c2_string + sst_std_c1_string + sst_std_c2_string+t2m_std_c1_string+t2m_std_c2_string
     return std_statement
