@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from RTM import scams
+from RTM import NEMS
 
 def ref_dataframe(df,df_water, variable_name, tp_ice, tp_water):
     """
@@ -12,11 +12,8 @@ def ref_dataframe(df,df_water, variable_name, tp_ice, tp_water):
     L = np.mean(df_water['L'])
     Ta = np.mean(df_water['t2m'])
     Ts = np.mean(df_water['sst'])
-    theta = 0
-    Ti_amsrv = np.full(7, 260)
-    Ti_amsrh = np.full(7, 260)
-    e_icev = np.full(7, 0.9)
-    e_iceh = np.full(7, 0.9)
+    Ti_amsr = np.full(7, 260)
+    e_ice = np.full(7, 0.9)
 
     RTM_Tb_ref = []
     RTM_lats_ref = []
@@ -29,7 +26,7 @@ def ref_dataframe(df,df_water, variable_name, tp_ice, tp_water):
         
         # Call the scams function with the calculated parameters
         try:
-            result = scams(V, W, L, Ta, Ts, theta, Ti_amsrv, Ti_amsrh, c_ice, e_icev, e_iceh)
+            result = NEMS(V, W, L, Ta, Ts, Ti_amsr, c_ice, e_ice)
             RTM_Tb_ref.append(result)
             RTM_lats_ref.append(df['LAT'].iloc[i])
             RTM_lons_ref.append(df['LON'].iloc[i])
@@ -83,18 +80,14 @@ def actual_bt_dataframe(df, variable_name, tp_ice, tp_water):
         L = L0[(L0 >= 0) & (L0 <= 1)]
         Ta = df['t2m'].iloc[i]
         Ts = df['sst'].iloc[i]
-        theta = 0
-        Ti_amsrv = np.full(7, 260)
-        Ti_amsrh = np.full(7, 260)
+        Ti_amsr = np.full(7, 260)
         bt = df[variable_name].iloc[i]
-        #c_ice = df['siconc'].iloc[i]
         c_ice = (bt - tp_water) / (tp_ice - tp_water)
-        e_icev = np.full(7, 0.9)
-        e_iceh = np.full(7, 0.9)
+        e_ice = np.full(7, 0.9)
 
         # Call the scams function with the calculated parameters
         try:
-            result = scams(V, W, L, Ta, Ts, theta, Ti_amsrv, Ti_amsrh, c_ice, e_icev, e_iceh)
+            result = NEMS(V, W, L, Ta, Ts, Ti_amsr, c_ice, e_ice)
             #if not np.isnan(result).any():  # Check if the result does not contain any NaN values
             RTM_Tb_akt.append(result)
             RTM_lats_akt.append(df['LAT'].iloc[i])
