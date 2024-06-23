@@ -20,8 +20,8 @@ def create_dataframe(ds):
     L = tcw - tcwv
     sst = ds['sst'][:,1].values
     msl = ds['msl'][:,1].values
-    TBNEMS_C1 = ds['TBNEMS'][:,0,0].values 
-    TBNEMS_C2 = ds['TBNEMS'][:,0,1].values
+    TBNEMS_C1 = ds['TBNEMS'][:,1,0].values 
+    TBNEMS_C2 = ds['TBNEMS'][:,1,1].values
     LON = ds['LON'][:,1].values
     LAT = ds['LAT'][:,1].values
     siconc = ds['siconc'][:,1].values
