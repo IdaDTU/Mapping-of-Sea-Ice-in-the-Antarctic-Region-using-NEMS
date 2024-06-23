@@ -222,6 +222,6 @@ def NEMS(V,W,L,Ta,Ts,Ti_amsr,c_ice,e_ice):
         T52=Tv52*(math.sin(math.radians(0)))**2 + Th52*(math.cos(math.radians(0)))**2
         
         #channel 1 on scams 22.231H, channel 2 31.650H, channel 3 52.863H
-        Tb=np.array([T22,T31,T52])
+        Tb=np.array([T22,T31])
     #return Tv, Th
     return Tb
