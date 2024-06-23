@@ -19,7 +19,6 @@ def create_dataframe(ds):
     tcw = ds['tcw'][:,1].values
     L = tcw - tcwv
     sst = ds['sst'][:,1].values
-    msl = ds['msl'][:,1].values
     TBNEMS_C1 = ds['TBNEMS'][:,1,0].values 
     TBNEMS_C2 = ds['TBNEMS'][:,1,1].values
     LON = ds['LON'][:,1].values
@@ -39,7 +38,6 @@ def create_dataframe(ds):
         'W': W,
         'L': L,
         'sst': sst,
-        'msl': msl,
         'TBNEMS_C1': TBNEMS_C1,
         'TBNEMS_C2': TBNEMS_C2,
         'LON': LON,
