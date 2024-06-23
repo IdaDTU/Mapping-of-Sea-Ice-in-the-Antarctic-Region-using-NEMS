@@ -13,7 +13,7 @@ from open_and_combine_nc_files_pattern import open_and_combine_nc_files_pattern
 import sys, os, string, math, cmath
 import numpy as np
 
-def scams(V,W,L,Ta,Ts,theta,Ti_amsrv,Ti_amsrh,c_ice,e_icev,e_iceh):
+def NEMS(V,W,L,Ta,Ts,Ti_amsr,c_ice,e_ice):
     """
     Calculate the brightness temperatures at different microwave frequencies,
     considering the impact of atmospheric and surface variables on satellite microwave measurements,
@@ -25,12 +25,9 @@ def scams(V,W,L,Ta,Ts,theta,Ti_amsrv,Ti_amsrh,c_ice,e_icev,e_iceh):
     L (float): Columnar cloud liquid water [mm] (tcw)
     Ta (float): Ambient air temperature (degrees Celsius).
     Ts (float): Sea surface temperature (degrees Celsius).
-    theta (float): Viewing angle of the satellite sensor in degrees from nadir.
-    Ti_amsrv (array8): Physical temperature for vertical polarization under atmospheric and surface conditions.
-    Ti_amsrh (array8): Similar to Ti_amsrv but for horizontal polarization.
+    Ti_amsr (array8): Ice Temperature [K] 
     c_ice (float): Ice concentration, ranging from 0 (no ice) to 1 (full ice cover).
-    e_icev (array): Emissivity of ice for vertical polarization.
-    e_iceh (array): Emissivity of ice for horizontal polarization.
+    e_ice (array): Ice emmisivity
 
     Returns:
     Tb (array): Brightness temperatures for channels 22.231V, 31.650V, and 52.863V.
@@ -149,7 +146,7 @@ def scams(V,W,L,Ta,Ts,theta,Ti_amsrv,Ti_amsrh,c_ice,e_icev,e_iceh):
         #eq 33
         AL[i]=aL1[i]*(1.0-aL2[i]*(Tl-283.0))*L
         #eq 22
-        tau[i]=np.exp((-1.0/math.cos(math.radians(theta)))*(AO[i]+AV[i]+AL[i])) 
+        tau[i]=np.exp((-1.0/math.cos(math.radians(0)))*(AO[i]+AV[i]+AL[i])) 
         #eq 24
         TBU[i]=TU[i]*(1.0-tau[i])
         TBD[i]=TD[i]*(1.0-tau[i])
@@ -159,17 +156,17 @@ def scams(V,W,L,Ta,Ts,theta,Ti_amsrv,Ti_amsrh,c_ice,e_icev,e_iceh):
         #eq 35
         epsilon[i]=epsilon_R+((epsilon_S-epsilon_R)/(1.0+((cmath.sqrt(-1)*lambda_R)/llambda[i])**(1.0-ny)))-((2.0*cmath.sqrt(-1)*sigma*llambda[i])/light_speed)
         #eq.45
-        rho_H[i]=(math.cos(math.radians(theta))-cmath.sqrt(epsilon[i]-math.sin(math.radians(theta))**2))/\
-                 (math.cos(math.radians(theta))+cmath.sqrt(epsilon[i]-math.sin(math.radians(theta))**2))
-        rho_V[i]=(epsilon[i]*math.cos(math.radians(theta))-cmath.sqrt(epsilon[i]-math.sin(math.radians(theta))**2))/\
-                 (epsilon[i]*math.cos(math.radians(theta))+cmath.sqrt(epsilon[i]-math.sin(math.radians(theta))**2))
+        rho_H[i]=(math.cos(math.radians(0))-cmath.sqrt(epsilon[i]-math.sin(math.radians(0))**2))/\
+                 (math.cos(math.radians(0))+cmath.sqrt(epsilon[i]-math.sin(math.radians(0))**2))
+        rho_V[i]=(epsilon[i]*math.cos(math.radians(0))-cmath.sqrt(epsilon[i]-math.sin(math.radians(0))**2))/\
+                 (epsilon[i]*math.cos(math.radians(0))+cmath.sqrt(epsilon[i]-math.sin(math.radians(0))**2))
         #eq46
         R_0H[i]=np.absolute(rho_H[i])**2
         R_0V[i]=np.absolute(rho_V[i])**2+(4.887E-8-6.108E-8*(Ts-273.0)**3)
 
         #eq 57
-        R_geoH[i]=R_0H[i]-(r0h[i]+r1h[i]*(theta-53.0)+r2h[i]*(Ts-288.0)+r3h[i]*(theta-53.0)*(Ts-288.0))*W
-        R_geoV[i]=R_0V[i]-(r0v[i]+r1v[i]*(theta-53.0)+r2v[i]*(Ts-288.0)+r3v[i]*(theta-53.0)*(Ts-288.0))*W
+        R_geoH[i]=R_0H[i]-(r0h[i]+r1h[i]*(0-53.0)+r2h[i]*(Ts-288.0)+r3h[i]*(0-53.0)*(Ts-288.0))*W
+        R_geoV[i]=R_0V[i]-(r0v[i]+r1v[i]*(0-53.0)+r2v[i]*(Ts-288.0)+r3v[i]*(0-53.0)*(Ts-288.0))*W
         #eq.60
         W_1=7.0
         W_2=12.0
@@ -200,29 +197,29 @@ def scams(V,W,L,Ta,Ts,theta,Ti_amsrv,Ti_amsrh,c_ice,e_icev,e_iceh):
         T_BOmegaV[i]=((1+OmegaV[i])*(1-tau[i])*(TD[i]-T_C)+T_C)*R_V[i]
         
         
-        Th22=TBU[3]+tau[3]*((1.0 - c_ice)*emissivityh[3]*Ts+c_ice*e_iceh[3]*Ti_amsrh[3]+(1.0 - c_ice)*(1.0 - emissivityh[3])*\
-             (T_BOmegaH[3]+tau[3]*T_C)+c_ice*(1.0 - e_iceh[3])*(TBD[3]+tau[3]*T_C))
+        Th22=TBU[3]+tau[3]*((1.0 - c_ice)*emissivityh[3]*Ts+c_ice*e_ice[3]*Ti_amsr[3]+(1.0 - c_ice)*(1.0 - emissivityh[3])*\
+             (T_BOmegaH[3]+tau[3]*T_C)+c_ice*(1.0 - e_ice[3])*(TBD[3]+tau[3]*T_C))
 
-        Tv22=TBU[3]+tau[3]*((1.0 - c_ice)*emissivityv[3]*Ts+c_ice*e_icev[3]*Ti_amsrv[3]+(1.0 - c_ice)*(1.0 - emissivityv[3])*\
-             (T_BOmegaV[3]+tau[3]*T_C)+c_ice*(1.0 - e_icev[3])*(TBD[3]+tau[3]*T_C))
+        Tv22=TBU[3]+tau[3]*((1.0 - c_ice)*emissivityv[3]*Ts+c_ice*e_ice[3]*Ti_amsr[3]+(1.0 - c_ice)*(1.0 - emissivityv[3])*\
+             (T_BOmegaV[3]+tau[3]*T_C)+c_ice*(1.0 - e_ice[3])*(TBD[3]+tau[3]*T_C))
         
-        T22=Tv22*(math.sin(math.radians(theta)))**2 + Th22*(math.cos(math.radians(theta)))**2
+        T22=Tv22*(math.sin(math.radians(0)))**2 + Th22*(math.cos(math.radians(0)))**2
         
-        Th31=TBU[4]+tau[4]*((1.0 - c_ice)*emissivityh[4]*Ts+c_ice*e_iceh[4]*Ti_amsrh[4]+(1.0 - c_ice)*(1.0 - emissivityh[4])*\
-             (T_BOmegaH[4]+tau[4]*T_C)+c_ice*(1.0 - e_iceh[4])*(TBD[4]+tau[4]*T_C))
+        Th31=TBU[4]+tau[4]*((1.0 - c_ice)*emissivityh[4]*Ts+c_ice*e_ice[4]*Ti_amsr[4]+(1.0 - c_ice)*(1.0 - emissivityh[4])*\
+             (T_BOmegaH[4]+tau[4]*T_C)+c_ice*(1.0 - e_ice[4])*(TBD[4]+tau[4]*T_C))
 
-        Tv31=TBU[4]+tau[4]*((1.0 - c_ice)*emissivityv[4]*Ts+c_ice*e_icev[4]*Ti_amsrv[4]+(1.0 - c_ice)*(1.0 - emissivityv[4])*\
-             (T_BOmegaV[4]+tau[4]*T_C)+c_ice*(1.0 - e_icev[4])*(TBD[4]+tau[4]*T_C))
+        Tv31=TBU[4]+tau[4]*((1.0 - c_ice)*emissivityv[4]*Ts+c_ice*e_ice[4]*Ti_amsr[4]+(1.0 - c_ice)*(1.0 - emissivityv[4])*\
+             (T_BOmegaV[4]+tau[4]*T_C)+c_ice*(1.0 - e_ice[4])*(TBD[4]+tau[4]*T_C))
         
-        T31=Tv31*(math.sin(math.radians(theta)))**2 + Th31*(math.cos(math.radians(theta)))**2
+        T31=Tv31*(math.sin(math.radians(0)))**2 + Th31*(math.cos(math.radians(0)))**2
         
-        Th52=TBU[6]+tau[6]*((1.0 - c_ice)*emissivityh[6]*Ts+c_ice*e_iceh[6]*Ti_amsrh[6]+(1.0 - c_ice)*(1.0 - emissivityh[6])*\
-             (T_BOmegaH[6]+tau[6]*T_C)+c_ice*(1.0 - e_iceh[6])*(TBD[6]+tau[6]*T_C))
+        Th52=TBU[6]+tau[6]*((1.0 - c_ice)*emissivityh[6]*Ts+c_ice*e_ice[6]*Ti_amsr[6]+(1.0 - c_ice)*(1.0 - emissivityh[6])*\
+             (T_BOmegaH[6]+tau[6]*T_C)+c_ice*(1.0 - e_ice[6])*(TBD[6]+tau[6]*T_C))
 
-        Tv52=TBU[6]+tau[6]*((1.0 - c_ice)*emissivityv[6]*Ts+c_ice*e_icev[6]*Ti_amsrv[6]+(1.0 - c_ice)*(1.0 - emissivityv[6])*\
-             (T_BOmegaV[6]+tau[6]*T_C)+c_ice*(1.0 - e_icev[6])*(TBD[6]+tau[6]*T_C))
+        Tv52=TBU[6]+tau[6]*((1.0 - c_ice)*emissivityv[6]*Ts+c_ice*e_ice[6]*Ti_amsr[6]+(1.0 - c_ice)*(1.0 - emissivityv[6])*\
+             (T_BOmegaV[6]+tau[6]*T_C)+c_ice*(1.0 - e_ice[6])*(TBD[6]+tau[6]*T_C))
         
-        T52=Tv52*(math.sin(math.radians(theta)))**2 + Th52*(math.cos(math.radians(theta)))**2
+        T52=Tv52*(math.sin(math.radians(0)))**2 + Th52*(math.cos(math.radians(0)))**2
         
         #channel 1 on scams 22.231H, channel 2 31.650H, channel 3 52.863H
         Tb=np.array([T22,T31,T52])
